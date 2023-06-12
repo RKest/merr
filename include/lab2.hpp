@@ -4,6 +4,7 @@
 
 using namespace units::isq::si::literals;
 
+// Wartości długości ogniskowych
 std::array fs{
         0.082648115_q_m,
         0.083753894_q_m,
@@ -17,9 +18,9 @@ std::array fs{
         0.084529543_q_m,
 };
 
-void lab2()
-{
+void lab2() {
+    // Liczenie niepewności całkowitej jako niepewność typu A
     const auto res = a(fs);
-    std::cout << fmt::format("Uc(f)\t = {}\n", res);
-    std::cout << fmt::format("U\t = {}\n", res * 2);
+    std::cout << fmt::format("Uc(f)\t = {:%.2GQ %q}\n", res);
+    std::cout << fmt::format("U\t = {:%.2GQ %q}\n", res * 2);
 }

@@ -10,7 +10,7 @@ project(phisics
 include(cmake/conan.cmake)
 run_conan()
 
-add_executable(main main2.cpp include/lab4.hpp include/common.hpp include/lab2.hpp include/lab3.hpp)
+add_executable(main main.cpp)
 
 target_link_libraries(main PRIVATE ${CONAN_LIBS})
 

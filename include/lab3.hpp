@@ -11,8 +11,10 @@ using namespace units::isq::si::literals;
 namespace r = units::isq::si::references;
 namespace d = boost::math::differentiation;
 
+// Jednostka ciepła właściwego
 constexpr auto cw_ref = (r::J / (r::kg * r::K));
 
+// Zmierzone wartości
 constexpr auto g_mk = 0.180280_q_kg;
 constexpr auto g_mkw = 0.372754_q_kg;
 constexpr auto g_mkwl = 0.401800_q_kg;
@@ -22,6 +24,7 @@ constexpr auto T0 = 273.16_q_K;
 constexpr auto Ck = 896 * cw_ref;
 constexpr auto Cw = 4186 * cw_ref;
 
+// Funkcja licząca ciepło topnienia lodu
 template<typename MK, typename MKW, typename MKWL, typename T1, typename T2>
 d::promote<MK, MKW, MKWL, T1, T2> qt(MK mk, MKW mkw, MKWL mkwl, T1 t1, T2 t2) {
     return ((Cw.number() * (mkw - mk) + Ck.number() * mk) * (t1 - t2) - Cw.number() * (mkwl - mkw) * (t2 - T0.number()))
@@ -29,13 +32,21 @@ d::promote<MK, MKW, MKWL, T1, T2> qt(MK mk, MKW mkw, MKWL mkwl, T1 t1, T2 t2) {
 }
 
 void lab3() {
-    constexpr unsigned max_order = 1;
-    auto const vars = d::make_ftuple<double, max_order, max_order, max_order, max_order, max_order>(g_mk.number(),
-                                                                                                    g_mkw.number(),
-                                                                                                    g_mkwl.number(),
-                                                                                                    g_T1.number(),
-                                                                                                    g_T2.number());
-    auto [_mk, _mkw, _mkwl, _t1, _t2] = vars;
-    auto res = qt(_mk, _mkw, _mkwl, _t1, _t2);
-    std::cout << std::setprecision(20) << "Res: " << res.derivative(0, 0, 0, 0, 0) << '\n';
+    auto const vars = d::make_ftuple<double, 1, 1, 1, 1, 1>(g_mk.number(), g_mkw.number(),
+                                                            g_mkwl.number(), g_T1.number(), g_T2.number());
+    auto [mk, mkw, mkwl, t1, t2] = vars;
+    auto res = qt(mk, mkw, mkwl, t1, t2);
+    // Liczenie wartości ciepła topnienia lodu
+    auto result = res.derivative(0, 0, 0, 0, 0) * r::J;
+    // Liczehie niepewności całkowitej
+    auto precision = c(
+            res,
+            b(0.000002),
+            b(0.000002),
+            b(0.000002),
+            b(0.1),
+            b(0.1)) * r::J;
+    std::cout << fmt::format("Result:\t = {:%.2Q %q}\n", result);
+    std::cout << fmt::format("Uc(qt)\t = {:%.2Q %q}\n", precision);
+    std::cout << fmt::format("U\t = {:%.2Q %q}\n", precision * 2);
 }
