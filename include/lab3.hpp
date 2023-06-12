@@ -46,7 +46,7 @@ void lab3() {
             b(0.000002),
             b(0.1),
             b(0.1)) * r::J;
-    std::cout << fmt::format("Result:\t = {:%.2Q %q}\n", result);
+    std::cout << fmt::format("qt:\t = {:%.2Q %q}\n", result);
     std::cout << fmt::format("Uc(qt)\t = {:%.2Q %q}\n", precision);
     std::cout << fmt::format("U\t = {:%.2Q %q}\n", precision * 2);
 }
